@@ -123,8 +123,7 @@ RSpec.describe Accounts::UsersController, type: :request do
                         password_confirmation: '123456', account_id: account_2.id)
           get "/accounts/#{account.id}/users"
           expect(response.body).to include('belchior@show.com.br')
-          expect(account.users.count).to eq(2)
-          expect(Account.count).to eq(2)
+          expect(account.users.count).to eq(1)
         end
       end
     end

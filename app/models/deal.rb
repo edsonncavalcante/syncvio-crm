@@ -9,12 +9,14 @@
 #  status            :string           default("open"), not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  account_id        :bigint           not null
 #  contact_id        :bigint           not null
 #  pipeline_id       :bigint
 #  stage_id          :bigint           not null
 #
 # Indexes
 #
+#  index_deals_on_account_id   (account_id)
 #  index_deals_on_contact_id   (contact_id)
 #  index_deals_on_pipeline_id  (pipeline_id)
 #  index_deals_on_stage_id     (stage_id)
@@ -29,6 +31,7 @@ class Deal < ApplicationRecord
   include CustomAttributes
 
   belongs_to :contact
+  belongs_to :account
 
   # has_and_belongs_to_many :contacts
   # has_many :contacts_deals
@@ -109,7 +112,8 @@ class Deal < ApplicationRecord
   end
 
   def self.csv_header(account_id)
-    custom_fields = CustomAttributeDefinition.where(attribute_model: 'deal_attribute').map do |i|
+    custom_fields = CustomAttributeDefinition.where(account_id: account_id,
+                                                    attribute_model: 'deal_attribute').map do |i|
       "custom_attributes.#{i.attribute_key}"
     end
     column_names.excluding('account_id', 'created_at', 'updated_at', 'id', 'custom_attributes') + custom_fields
